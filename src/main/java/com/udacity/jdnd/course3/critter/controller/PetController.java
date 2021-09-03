@@ -1,5 +1,7 @@
-package com.udacity.jdnd.course3.critter.pet;
+package com.udacity.jdnd.course3.critter.controller;
 
+import com.udacity.jdnd.course3.critter.pet.Pet;
+import com.udacity.jdnd.course3.critter.pet.PetDTO;
 import com.udacity.jdnd.course3.critter.repos.PetRepo;
 import com.udacity.jdnd.course3.critter.services.CustomerService;
 import com.udacity.jdnd.course3.critter.services.PetService;
@@ -30,12 +32,12 @@ public class PetController {
     @PostMapping
     public PetDTO savePet(@RequestBody PetDTO petDTO) {
 
-       if(petDTO.getOwnerId()==null || petDTO.getName()== null || petDTO.getType()==null)    throw new UnsupportedOperationException();
+       if(petDTO.getOwnerId()==null || petDTO.getName()== null || petDTO.getType()==null)    throw new UnsupportedOperationException("");
        else {
             PetDTO petDTO1 = petToDTO(petService.save(petDTOToPet(petDTO)));
             Customer customer = customerService.findById(petDTO1.getOwnerId());
             customer.addPetToList(petDTOToPet(petDTO1));
-            customerService.save(customerService.customerToDTO(customer));
+            customerService.save(customer);
             return petDTO1;
         }
     }

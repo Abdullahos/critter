@@ -24,41 +24,41 @@ public class ScheduleService {
     @Autowired
     private EmployeeService employeeService;
 
-    public ScheduleDTO save(ScheduleDTO scheduleDTO){
-        return toDTO(scheduleRepo.save(toSchedule(scheduleDTO)));
+    public Schedule save(Schedule schedule){
+        return scheduleRepo.save(schedule);
     }
-    public List<ScheduleDTO> findAll(){
+    public List<Schedule> findAll(){
          List<Schedule> scheduleList = (List<Schedule>) scheduleRepo.findAll();
-         List<ScheduleDTO>scheduleDTOS = new ArrayList<>();
-         scheduleList.forEach(schedule->scheduleDTOS.add(toDTO(schedule)));
-         return scheduleDTOS;
+         return scheduleList;
     }
 
-    public ScheduleDTO findById(Long id){
+    public Schedule findById(Long id){
         Optional<Schedule>scheduleOptional = scheduleRepo.findById(id);
         if(scheduleOptional.isPresent()){
-            return toDTO(scheduleOptional.get());
+            return scheduleOptional.get();
         }
         else throw new InputMismatchException("no such schedule id!");
     }
-    public List<ScheduleDTO> findByPet(Long petId){
+    public List<Schedule> findByPet(Long petId){
         Pet pet = petService.findById(petId);
         List<Schedule> scheduleList = scheduleRepo.findByPetContaining(pet);
-        List<ScheduleDTO> dtos = new ArrayList<>();
-
-        scheduleList.forEach(schedule -> dtos.add(toDTO(schedule)));
-        return dtos;
+        return scheduleList;
     }
 
-    public List<ScheduleDTO> findByEmployee(Long employeeId){
+    public List<Schedule> findByEmployee(Long employeeId){
         Employee employee = employeeService.findById(employeeId);
         List<Schedule> scheduleListContainingEmployee = scheduleRepo.findByEmployeeContaining(employee);
-        List<ScheduleDTO>dtos = new ArrayList<>();
-
-        scheduleListContainingEmployee.forEach(schedule -> dtos.add(toDTO(schedule)));
-        return dtos;
+        return scheduleListContainingEmployee;
     }
 
+    public List<Schedule> findByCustomer(long customerId) {
+        List<Schedule>schedules = new ArrayList<>();
+        List<Pet> petsOwnedByCustomer = petService.findBycustomerId(customerId);
+        petsOwnedByCustomer.forEach(pet-> {
+            scheduleRepo.findByPetContaining(pet).forEach(pet2 -> schedules.add(pet2));
+        });
+        return schedules;
+    }
     /**
      * DTO conversion
      */
@@ -85,14 +85,5 @@ public class ScheduleService {
         empsIds.forEach(id->schedule.addEmployee(employeeService.findById(id)));
 
         return schedule;
-    }
-
-    public List<ScheduleDTO> findByCustomer(long customerId) {
-        List<ScheduleDTO>schedules = new ArrayList<>();
-        List<Pet> petsOwnedByCustomer = petService.findBycustomerId(customerId);
-        petsOwnedByCustomer.forEach(pet-> {
-            scheduleRepo.findByPetContaining(pet).forEach(pet2 -> schedules.add(toDTO(pet2)));
-        });
-        return schedules;
     }
 }
