@@ -10,3 +10,4 @@ import java.util.List;
 public interface PetRepo extends CrudRepository<Pet,Long> {
     List<Pet> findByCustomerId(Long id);
 }
+

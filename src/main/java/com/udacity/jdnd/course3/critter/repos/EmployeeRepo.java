@@ -14,4 +14,5 @@ import java.util.Set;
 @Transactional
 @Repository
 public interface EmployeeRepo extends CrudRepository<Employee,Long> {
+    List<Employee> findByDaysAvailableContaining(DayOfWeek day);
 }

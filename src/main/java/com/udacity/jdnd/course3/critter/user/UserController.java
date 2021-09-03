@@ -67,9 +67,8 @@ public class UserController {
         if (employeeDTO.getName() == null || employeeDTO.getSkills() == null) throw new UnsupportedOperationException();
         else {
             Employee employee = employeeService.DTOToEmployee(employeeDTO);
-            Employee retrievedEmployee = employeeService.save(employee);
-            EmployeeDTO dto = employeeService.employeeToDTO(retrievedEmployee);
-            return dto;
+            EmployeeDTO retrievedEmployee = employeeService.save(employee);
+            return retrievedEmployee;
         }
     }
     @PostMapping("/employee/{employeeId}")
@@ -101,15 +100,7 @@ public class UserController {
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeRequestDTO) {
         DayOfWeek day = employeeRequestDTO.getDate().getDayOfWeek();
         Set<EmployeeSkill>skills = employeeRequestDTO.getSkills();
-        System.out.println(day+" "+skills);
-
         List<EmployeeDTO>capableEmployees = employeeService.findBySkillsAndDay(skills,day);
-        /*List<EmployeeDTO>dtos = new ArrayList<>();
-
-        capableEmployees.forEach(employee -> dtos.add(employeeService.employeeToDTO(employee)));
-        return dtos;
-         */
-        //throw new UnsupportedOperationException();
        return capableEmployees;
     }
 

@@ -2,8 +2,10 @@ package com.udacity.jdnd.course3.critter.schedule;
 
 import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
 
+import javax.persistence.Embeddable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +13,7 @@ import java.util.Set;
  * Represents the form that schedule request and response data takes. Does not map
  * to the database directly.
  */
+@Embeddable
 public class ScheduleDTO {
     private long id;
     private List<Long> employeeIds;
@@ -63,5 +66,11 @@ public class ScheduleDTO {
             this.petIds = new ArrayList<>();
         }
         this.petIds.add(id);
+    }
+    public void addActivity(EmployeeSkill skills){
+        if(this.activities==null){
+            this.activities = (Set<EmployeeSkill>) new ArrayList<EmployeeSkill>();
+        }
+        activities.add(skills);
     }
 }

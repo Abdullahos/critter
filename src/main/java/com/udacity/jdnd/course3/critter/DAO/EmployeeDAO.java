@@ -1,5 +1,6 @@
 package com.udacity.jdnd.course3.critter.DAO;
 
+import com.udacity.jdnd.course3.critter.user.DTO.EmployeeDTO;
 import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
 import com.udacity.jdnd.course3.critter.user.Entity.Employee;
 import org.springframework.stereotype.Repository;
@@ -10,5 +11,5 @@ import java.util.Set;
 @Transactional
 @Repository
 public interface EmployeeDAO {
-    List<Employee> findEmployeesByDayAndSkills(int day, Set<EmployeeSkill> skills);
+    List<EmployeeDTO> findEmployeesByDayAndSkills(int day, Set<EmployeeSkill> skills);
 }
