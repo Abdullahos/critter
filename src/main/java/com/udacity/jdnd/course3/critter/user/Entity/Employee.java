@@ -1,14 +1,10 @@
 package com.udacity.jdnd.course3.critter.user.Entity;
 
 import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Type;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.time.DayOfWeek;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @Entity
