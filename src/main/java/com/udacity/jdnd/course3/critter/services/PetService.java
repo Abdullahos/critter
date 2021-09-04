@@ -17,22 +17,38 @@ public class PetService {
     @Autowired
     private PetRepo petRepo;
 
+    /**
+     * @param pet(id==null)
+     * @return Pet Object(id!=null)
+     */
     public Pet save(Pet pet){
         return petRepo.save(pet);
     }
 
+    /**
+     * @param id
+     * @return  Pet object if exists or null
+     */
     public Pet findById(Long id){
         Optional<Pet> optionalPet = petRepo.findById(id);
-        if(optionalPet.isPresent()){
+        if(optionalPet.isPresent()) {
             return optionalPet.get();
         }
-        else throw new UnsupportedOperationException("no such id!");
+        return null;
     }
 
+    /**
+     *
+     * @return list of Pets or Empty list if not any.
+     */
     public List<Pet> findAll() {
         return (List<Pet>) petRepo.findAll();
     }
 
+    /**
+     * @param id
+     * @return List of Pets owned by given customer or empty list if not any.
+     */
     public List<Pet> findBycustomerId(Long id){
         return petRepo.findByCustomerId(id);
     }

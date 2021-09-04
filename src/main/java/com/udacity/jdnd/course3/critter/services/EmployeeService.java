@@ -18,17 +18,31 @@ public class EmployeeService{
     @Autowired
     private EmployeeRepo employeeRepo;
 
+    /**
+     * @param employee(id == null)
+     * @return Employee(id!=null)
+     */
     public Employee save(Employee employee) {
         return employeeRepo.save(employee);
     }
 
+    /**
+     * @param id
+     * @return Employee of id or null if not exist.
+     */
     public Employee findById(Long id){
         Optional<Employee> optionalEmployee =  employeeRepo.findById(id);
         if(optionalEmployee.isPresent()){
             return optionalEmployee.get();
         }
-        else throw new InputMismatchException("no such employee id");
+        else return null;
     }
+
+    /**
+     * @param skills
+     * @param day
+     * @return   list of Employees of these skills and day or empty list if not any.
+     */
     public List<Employee> findBySkillsAndDay(Set<EmployeeSkill> skills, DayOfWeek day){
 
         List<Employee> employees = employeeRepo.findByDaysAvailableContaining(day);
@@ -40,13 +54,21 @@ public class EmployeeService{
         });
         return capableEmps;
     }
-    /**this method convert to DTO**/
+
+    /**
+     * @param employee
+     * @return EmployeeDTO
+     */
     public EmployeeDTO employeeToDTO(Employee employee){
         EmployeeDTO employeeDTO = new EmployeeDTO();
         BeanUtils.copyProperties(employee,employeeDTO);
         return employeeDTO;
     }
-    /**from DTO to Employee**/
+
+    /**
+     * @param employeeDTO
+     * @return Employee
+     */
     public Employee DTOToEmployee(EmployeeDTO employeeDTO){
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO,employee);

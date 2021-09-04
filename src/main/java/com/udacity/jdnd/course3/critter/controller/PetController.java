@@ -1,5 +1,7 @@
 package com.udacity.jdnd.course3.critter.controller;
 
+import com.udacity.jdnd.course3.critter.exception.MissingInfoException;
+import com.udacity.jdnd.course3.critter.exception.ObjectNotFound;
 import com.udacity.jdnd.course3.critter.pet.Pet;
 import com.udacity.jdnd.course3.critter.pet.PetDTO;
 import com.udacity.jdnd.course3.critter.repos.PetRepo;
@@ -32,7 +34,7 @@ public class PetController {
     @PostMapping
     public PetDTO savePet(@RequestBody PetDTO petDTO) {
 
-       if(petDTO.getOwnerId()==null || petDTO.getName()== null || petDTO.getType()==null)    throw new UnsupportedOperationException("");
+       if(petDTO.getOwnerId()==null || petDTO.getName()== null || petDTO.getType()==null)    throw new MissingInfoException("owner id, pet name, or type can't be null!");
        else {
             PetDTO petDTO1 = petToDTO(petService.save(petDTOToPet(petDTO)));
             Customer customer = customerService.findById(petDTO1.getOwnerId());
@@ -44,14 +46,15 @@ public class PetController {
 
     @GetMapping("/{petId}")
     public PetDTO getPet(@PathVariable long petId) {
-        return petToDTO(petService.findById(petId));
+        Pet pet = petService.findById(petId);
+        if(pet==null)   throw new ObjectNotFound("no such pet id!");
+        return petToDTO(pet);
     }
 
     @GetMapping
     public List<PetDTO> getPets(){
         List<Pet> petList =  petService.findAll();
         List<PetDTO>petDTOS = new ArrayList<>();
-
         petList.forEach(pet -> petDTOS.add(petToDTO(pet)));
         return petDTOS;
     }
@@ -60,12 +63,11 @@ public class PetController {
     public List<PetDTO> getPetsByOwner(@PathVariable long ownerId) {
         List<PetDTO>petDTOS = new ArrayList<>();
         List<Pet> petList = petRepo.findByCustomerId(ownerId);
-
         if(!petList.isEmpty()){
             petList.forEach(pet -> petDTOS.add(petToDTO(pet)));
             return petDTOS;
         }
-        throw new UnsupportedOperationException("no such owner id!");
+        throw new ObjectNotFound("no such owner id!");
     }
 
     public PetDTO petToDTO(Pet pet){
@@ -81,7 +83,6 @@ public class PetController {
         Pet pet = new Pet();
         BeanUtils.copyProperties(petDTO,pet);
         if(petDTO.getOwnerId()!=null){
-            System.out.println("not null");
             pet.setCustomer(customerService.findById(petDTO.getOwnerId()));
         }
         return pet;

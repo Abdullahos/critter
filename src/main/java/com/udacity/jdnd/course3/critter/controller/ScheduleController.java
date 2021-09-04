@@ -1,5 +1,6 @@
 package com.udacity.jdnd.course3.critter.controller;
 
+import com.udacity.jdnd.course3.critter.exception.ObjectNotFound;
 import com.udacity.jdnd.course3.critter.schedule.Schedule;
 import com.udacity.jdnd.course3.critter.schedule.ScheduleDTO;
 import com.udacity.jdnd.course3.critter.services.ScheduleService;
@@ -35,29 +36,37 @@ public class ScheduleController {
     @GetMapping("/pet/{petId}")
     public List<ScheduleDTO> getScheduleForPet(@PathVariable long petId) {
         List<Schedule>scheduleList = scheduleService.findByPet(petId);
-        List<ScheduleDTO>scheduleDTOS = new ArrayList<>();
-        if(scheduleList!=null){
+        //if there's schedule attached to this pet
+        if(!scheduleList.isEmpty()){
+            List<ScheduleDTO>scheduleDTOS = new ArrayList<>();
             scheduleList.forEach(schedule -> scheduleDTOS.add(scheduleService.toDTO(schedule)));
+            return scheduleDTOS;
         }
-        return scheduleDTOS;
+        else throw new ObjectNotFound("no such schedule of this pet id!");
     }
 
     @GetMapping("/employee/{employeeId}")
     public List<ScheduleDTO> getScheduleForEmployee(@PathVariable long employeeId) {
         List<Schedule>scheduleList = scheduleService.findByEmployee(employeeId);
-        List<ScheduleDTO>scheduleDTOS = new ArrayList<>();
-        if(scheduleList!=null){
+        if(!scheduleList.isEmpty()){
+            List<ScheduleDTO>scheduleDTOS = new ArrayList<>();
             scheduleList.forEach(schedule -> scheduleDTOS.add(scheduleService.toDTO(schedule)));
+            return scheduleDTOS;
         }
-        return scheduleDTOS;
+        else {
+            throw new ObjectNotFound("no such schedule for that employee!");
+        }
     }
     @GetMapping("/customer/{customerId}")
     public List<ScheduleDTO> getScheduleForCustomer(@PathVariable long customerId) {
         List<Schedule>scheduleList =  scheduleService.findByCustomer(customerId);
         List<ScheduleDTO>scheduleDTOS = new ArrayList<>();
-        if(scheduleList!=null){
+        if(!scheduleList.isEmpty()){
             scheduleList.forEach(schedule -> scheduleDTOS.add(scheduleService.toDTO(schedule)));
+            return scheduleDTOS;
         }
-        return scheduleDTOS;
+        else {
+            throw new ObjectNotFound("no such schedule for that customer");
+        }
     }
 }

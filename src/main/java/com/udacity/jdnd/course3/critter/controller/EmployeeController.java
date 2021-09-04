@@ -1,5 +1,7 @@
 package com.udacity.jdnd.course3.critter.controller;
 
+import com.udacity.jdnd.course3.critter.exception.MissingInfoException;
+import com.udacity.jdnd.course3.critter.exception.ObjectNotFound;
 import com.udacity.jdnd.course3.critter.services.EmployeeService;
 import com.udacity.jdnd.course3.critter.user.DTO.EmployeeDTO;
 import com.udacity.jdnd.course3.critter.user.DTO.EmployeeRequestDTO;
@@ -24,7 +26,7 @@ public class EmployeeController {
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
         //some dummies assumption, can be configured when understand the requirements more clearly
-        if (employeeDTO.getName() == null || employeeDTO.getSkills() == null) throw new UnsupportedOperationException();
+        if (employeeDTO.getName() == null || employeeDTO.getSkills() == null) throw new MissingInfoException("employee name or skills can't be empty");
         else {
             Employee employee = employeeService.DTOToEmployee(employeeDTO);
             EmployeeDTO retrievedEmployee = employeeService.employeeToDTO(employeeService.save(employee));
@@ -34,27 +36,29 @@ public class EmployeeController {
     @PostMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
         Employee retrievedEmployee =  employeeService.findById(employeeId);
+        if(retrievedEmployee==null) throw new ObjectNotFound("no such employee id!");
         EmployeeDTO dto = employeeService.employeeToDTO(retrievedEmployee);
         return dto;
 
     }
     @PutMapping("/employee/{employeeId}")
     public void setAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable long employeeId) {
-        //if not found exception will be thrown(managed in the service layer)
         Employee employee = employeeService.findById(employeeId);
+        if(employee==null) throw new ObjectNotFound("no such employee id!");
         employee.setDaysAvailable(daysAvailable);
     }
 
     @GetMapping("/employee/{id}")
     public EmployeeDTO findById(@PathVariable Long id){
         Employee employee = employeeService.findById(id);
+        if(employee==null)  throw new ObjectNotFound("no such employee id!");
         return employeeService.employeeToDTO(employee);
     }
-    @GetMapping("/employee/availability")
 
     /**
      * find list of employee(s) by skills and availability
      */
+    @GetMapping("/employee/availability")
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeRequestDTO) {
         DayOfWeek day = employeeRequestDTO.getDate().getDayOfWeek();
         Set<EmployeeSkill>skills = employeeRequestDTO.getSkills();

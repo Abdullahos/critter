@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 @Transactional
@@ -27,40 +26,72 @@ public class ScheduleService {
     public Schedule save(Schedule schedule){
         return scheduleRepo.save(schedule);
     }
+
+    /**
+     * @return  list of Schedule objects or empty list if not any.
+     */
     public List<Schedule> findAll(){
          List<Schedule> scheduleList = (List<Schedule>) scheduleRepo.findAll();
          return scheduleList;
     }
 
+    /**
+     * @param id
+     * @return Schedule object or null if there's no dchedule for this id.
+     */
     public Schedule findById(Long id){
         Optional<Schedule>scheduleOptional = scheduleRepo.findById(id);
         if(scheduleOptional.isPresent()){
             return scheduleOptional.get();
         }
-        else throw new InputMismatchException("no such schedule id!");
+        else return null;
     }
+
+    /**
+     * @param petId
+     * @return schdeule list of given pet or empty list of no such relationship
+     */
     public List<Schedule> findByPet(Long petId){
+        List<Schedule> scheduleList = new ArrayList<>();
         Pet pet = petService.findById(petId);
-        List<Schedule> scheduleList = scheduleRepo.findByPetContaining(pet);
+
+        if(pet!=null)   scheduleList = scheduleRepo.findByPetContaining(pet);
         return scheduleList;
     }
 
+    /***
+     *
+     * @param employeeId
+     * @return schdeule list of given employee or empty list of no such relationship
+     */
     public List<Schedule> findByEmployee(Long employeeId){
         Employee employee = employeeService.findById(employeeId);
-        List<Schedule> scheduleListContainingEmployee = scheduleRepo.findByEmployeeContaining(employee);
+        List<Schedule> scheduleListContainingEmployee = new ArrayList<>();
+        if(employee!=null){
+            scheduleListContainingEmployee = scheduleRepo.findByEmployeeContaining(employee);
+        }
         return scheduleListContainingEmployee;
     }
 
+    /**
+     *
+     * @param customerId
+     * @return  schdeule list of given customer or empty list of no such relationship
+     */
     public List<Schedule> findByCustomer(long customerId) {
-        List<Schedule>schedules = new ArrayList<>();
         List<Pet> petsOwnedByCustomer = petService.findBycustomerId(customerId);
-        petsOwnedByCustomer.forEach(pet-> {
-            scheduleRepo.findByPetContaining(pet).forEach(pet2 -> schedules.add(pet2));
-        });
+        List<Schedule> schedules = new ArrayList<>();
+        if(!petsOwnedByCustomer.isEmpty()) {
+            petsOwnedByCustomer.forEach(pet -> {
+                scheduleRepo.findByPetContaining(pet).forEach(pet2 -> schedules.add(pet2));
+            });
+        }
         return schedules;
     }
+
     /**
-     * DTO conversion
+     * @param schedule
+     * @return  ScheduleDTO
      */
     public ScheduleDTO toDTO(Schedule schedule){
         ScheduleDTO dto = new ScheduleDTO();
@@ -74,6 +105,11 @@ public class ScheduleService {
 
         return dto;
     }
+
+    /**
+     * @param dto
+     * @return Schedule
+     */
     public Schedule toSchedule(ScheduleDTO dto){
         Schedule schedule = new Schedule();
         BeanUtils.copyProperties(dto,schedule);

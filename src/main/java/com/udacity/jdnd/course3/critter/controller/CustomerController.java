@@ -1,5 +1,7 @@
 package com.udacity.jdnd.course3.critter.controller;
 
+import com.udacity.jdnd.course3.critter.exception.MissingInfoException;
+import com.udacity.jdnd.course3.critter.exception.ObjectNotFound;
 import com.udacity.jdnd.course3.critter.services.CustomerService;
 import com.udacity.jdnd.course3.critter.user.DTO.CustomerDTO;
 import com.udacity.jdnd.course3.critter.user.Entity.Customer;
@@ -19,12 +21,12 @@ public class CustomerController {
 
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
+
+        //uncomment this after testing
         if(customerDTO.getName()==null || customerDTO.getPhoneNumber()==null) {
-            throw new UnsupportedOperationException();
+            throw new MissingInfoException("name or phone number can't be null!");
         }
-        else {
-            return customerService.customerToDTO(customerService.save(customerService.DTOToCustomer(customerDTO)));
-        }
+        return customerService.customerToDTO(customerService.save(customerService.DTOToCustomer(customerDTO)));
     }
 
     @GetMapping("/customer")
@@ -36,13 +38,12 @@ public class CustomerController {
             customerList.forEach(customer -> customerDTOS.add(customerService.customerToDTO(customer)));
         }
         return customerDTOS;
-        //throw new UnsupportedOperationException();
     }
 
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId){
         Customer customer = customerService.findByPetListId(petId);
         if(customer!=null)  return customerService.customerToDTO(customer);
-        throw new UnsupportedOperationException("no such pet id!");
+        throw new ObjectNotFound("no such pet id!");
     }
 }
