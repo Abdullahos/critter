@@ -14,7 +14,7 @@ public class Customer{
     private String name;
     private String phoneNumber;
     private String notes;
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer")   //on customer can have many pets, FETCH.LAZY (by default) to avoid recursive cascading.
     private List<Pet> petList;
 
     public Long getId() {

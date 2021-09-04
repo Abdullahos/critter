@@ -19,12 +19,17 @@ public class Employee {
     private Long id;
 
     private String name;
-
+    /**ElementCollection create table for skills(not entity) and add employee id column to it.
+     * FetchType.EAGER to retrieve the skills with getting employee info without specific ask for it.
+     */
     @ElementCollection(targetClass = EmployeeSkill.class,fetch = FetchType.EAGER)
     @CollectionTable
     @Enumerated(EnumType.STRING)
     private Set<EmployeeSkill> skills;
 
+    /**ElementCollection create table for daysAvailable(not entity) and add employee id column to it.
+     * FetchType.EAGER to retrieve the daysAvailable with getting employee info without specific ask for it.
+     */
     @ElementCollection(targetClass = DayOfWeek.class,fetch = FetchType.EAGER)
     @CollectionTable
     @Enumerated(EnumType.STRING)

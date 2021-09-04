@@ -19,8 +19,8 @@ public class Pet {
     private LocalDate birthDate;
     private String notes;
 
-    @ManyToOne
-    @JoinColumn(name = "ownerId")   //to create foreign key named owner_id in the pet table in db
+    @ManyToOne //many pets can belong to only one customer,FETCH.LAZY by default to avoid recursive cascading
+    @JoinColumn(name = "ownerId")       //to create foreign key named owner_id in the pet table in db
     private Customer customer;
 
 
